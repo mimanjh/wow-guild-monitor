@@ -24,9 +24,13 @@ function Sidebar({ pathname }) {
   ];
 
   return (
-    <Sider width={200} className="site-layout-background">
+    <Sider
+      width={200}
+      // className="site-layout-background"
+    >
       <Menu
         mode="inline"
+        theme="dark"
         selectedKeys={[pathname]} // Highlight current page
         style={{ height: "100%", borderRight: 0 }}
         items={menuItems}
