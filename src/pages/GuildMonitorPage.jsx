@@ -43,6 +43,10 @@ function GuildMonitorPage() {
       title: "Item Level",
       dataIndex: "average_item_level",
     },
+    {
+      title: "Faction",
+      dataIndex: ["faction", "name"],
+    },
   ];
 
   return (
