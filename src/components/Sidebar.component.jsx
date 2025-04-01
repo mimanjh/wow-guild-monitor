@@ -7,13 +7,14 @@ const { Sider } = Layout;
 
 function Sidebar({ pathname }) {
   const navigate = useNavigate();
+  console.log("[T]", pathname);
 
   const menuItems = [
     {
-      key: "/page1",
+      key: "/guild-monitor",
       icon: <HomeOutlined />,
-      label: "Page 1",
-      onClick: () => navigate("/page1"),
+      label: "Guild Monitor",
+      onClick: () => navigate("/guild-monitor"),
     },
     {
       key: "/page2",
