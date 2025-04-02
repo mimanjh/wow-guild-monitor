@@ -7,7 +7,6 @@ const { Sider } = Layout;
 
 function Sidebar({ pathname }) {
   const navigate = useNavigate();
-  console.log("[T]", pathname);
 
   const menuItems = [
     {
