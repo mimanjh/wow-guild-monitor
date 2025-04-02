@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import Sidebar from "./components/Sidebar.component";
 import GuildMonitorPage from "./pages/GuildMonitorPage";
 import Page2 from "./pages/Page2";
+import "./functions/wowApi";
 const { Content, Header } = Layout;
 
 const headerHeightPx = 64;
