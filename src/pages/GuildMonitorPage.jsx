@@ -93,7 +93,7 @@ function GuildMonitorPage() {
           <div style={{ display: "flex", gap: "10px" }}>
             <h2>Awaken Reunited</h2>
             <span style={{ marginLeft: "auto" }}>
-              <b>{now}</b>
+              <b>As of [{now}]</b>
             </span>
           </div>
         )}
