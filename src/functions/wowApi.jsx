@@ -4,6 +4,7 @@ const API_CLIENT_SECRET = import.meta.env.VITE_API_CLIENT_SECRET;
 export let wowApiToken = null;
 
 export async function generateWowApiToken() {
+  console.log("--- Generating token ---");
   const url = "https://oauth.battle.net/token";
   const response = await fetch(url, {
     method: "POST",

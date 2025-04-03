@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography } from "antd";
+import { Spin, Table, Typography } from "antd";
 import { generateWowApiToken, wowApiToken } from "../functions/wowApi";
 import dayjs from "dayjs";
+import "./GuildMonitorPage.scss";
 
 const { Title } = Typography;
 
@@ -11,7 +12,7 @@ const characterPool = [
   "Noahya-tichondrius",
   "Hayaks-tichondrius",
   "Lambda-tichondrius",
-  "Soulpoww-tichondrius",
+  "Soullpow-tichondrius",
   "Qudans-tichondrius",
   "Typhoonsflow-tichondrius",
   "Pjjcs-tichondrius",
@@ -20,10 +21,12 @@ const characterPool = [
   "Nadacow-tichondrius",
   "Runeforging-tichondrius",
   "Armysong-tichondrius",
+  "Zero-echo isles",
 ];
+const guildName = "Awaken Reunited";
 
 function GuildMonitorPage() {
-  const [dataSource, setDataSource] = useState(new Array(characterPool.length));
+  const [dataSource, setDataSource] = useState(new Array(characterPool.length).fill({ loading: true }));
   const now = dayjs().format("YYYY-MM-DD HH:mm");
 
   useEffect(() => {
@@ -31,7 +34,7 @@ function GuildMonitorPage() {
       let retryCount = 0;
       for (let i = 0; i < characterPool.length; i++) {
         try {
-          const [name, server] = characterPool[i].split("-").map((str) => str.toLowerCase());
+          const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
           const url = `https://us.api.blizzard.com/profile/wow/character/${server}/${name}?namespace=profile-us&locale=en_US`;
           const response = await fetch(url, {
             headers: new Headers({
@@ -69,9 +72,10 @@ function GuildMonitorPage() {
     {
       title: "Character Name",
       dataIndex: "name",
+      render: (text, record) => (record.loading ? <Spin spinning /> : text),
     },
     {
-      title: "Server",
+      title: "Realm",
       dataIndex: ["realm", "name"],
     },
     {
@@ -82,7 +86,32 @@ function GuildMonitorPage() {
       title: "Faction",
       dataIndex: ["faction", "name"],
     },
+    {
+      title: "Class",
+      dataIndex: ["character_class", "name"],
+      render: (name, record) => {
+        const specName = record.active_spec.name;
+        return `${name} - ${specName}`;
+      },
+    },
   ];
+
+  const renderSummary = (pageData) => {
+    let totalIL = 0;
+    pageData.forEach(({ average_item_level }) => {
+      totalIL += average_item_level;
+    });
+    return (
+      <>
+        <Table.Summary.Row>
+          <Table.Summary.Cell index={0} colSpan={2} align="right">
+            <b>Average Item Level</b>
+          </Table.Summary.Cell>
+          <Table.Summary.Cell index={1}>{(totalIL / pageData.length).toFixed(2)}</Table.Summary.Cell>
+        </Table.Summary.Row>
+      </>
+    );
+  };
 
   return (
     <div>
@@ -101,6 +130,8 @@ function GuildMonitorPage() {
         dataSource={dataSource}
         rowKey={"id"}
         pagination={false}
+        rowClassName={(record) => (record.guild?.name !== guildName ? "row-warning" : "")}
+        summary={renderSummary}
       />
     </div>
   );
