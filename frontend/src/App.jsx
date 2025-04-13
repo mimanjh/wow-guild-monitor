@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Layout } from "antd";
 import Sidebar from "./components/Sidebar.component";
 import GuildMonitorPage from "./pages/GuildMonitorPage";
@@ -35,7 +35,7 @@ function App() {
             <Routes>
               <Route path="/guild-monitor" element={<GuildMonitorPage />} />
               <Route path="/page2" element={<Page2 />} />
-              <Route path="/" element={<GuildMonitorPage />} />
+              <Route path="/" element={<Navigate replace to={"/guild-monitor"} />} />
             </Routes>
           </Content>
         </Layout>

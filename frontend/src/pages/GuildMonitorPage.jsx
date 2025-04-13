@@ -90,6 +90,7 @@ function GuildMonitorPage() {
       title: "Class",
       dataIndex: ["character_class", "name"],
       render: (name, record) => {
+        if (!name) return null;
         const specName = record.active_spec.name;
         return `${name} - ${specName}`;
       },
