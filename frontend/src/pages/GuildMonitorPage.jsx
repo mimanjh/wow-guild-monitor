@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Table, Typography } from "antd";
-import { generateWowApiToken, wowApiToken } from "../functions/wowApi";
+// import { generateWowApiToken, wowApiToken } from "../functions/wowApi";
 import dayjs from "dayjs";
 import "./GuildMonitorPage.scss";
+const VITE_API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 const { Title } = Typography;
 
@@ -30,43 +31,68 @@ function GuildMonitorPage() {
   const now = dayjs().format("YYYY-MM-DD HH:mm");
 
   useEffect(() => {
+    // async function fetchData() {
+    //   let retryCount = 0;
+    //   for (let i = 0; i < characterPool.length; i++) {
+    //     try {
+    //       const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
+    //       const url = `https://us.api.blizzard.com/profile/wow/character/${server}/${name}?namespace=profile-us&locale=en_US`;
+    //       const response = await fetch(url, {
+    //         headers: new Headers({
+    //           Authorization: `Bearer ${wowApiToken}`,
+    //         }),
+    //       });
+    //       if (!response.ok) {
+    //         if (response.status === 401) {
+    //           if (retryCount < 3) {
+    //             retryCount++;
+    //             await generateWowApiToken();
+    //             i--;
+    //             continue;
+    //           } else {
+    //             throw new Error(`Failed to renew and use API token`);
+    //           }
+    //         }
+    //         throw new Error(`Response status: ${response.status} for character [${characterPool[i]}]`);
+    //       }
+    //       const json = await response.json();
+    //       setDataSource((prev) => {
+    //         const copy = [...prev];
+    //         copy[i] = json;
+    //         return copy;
+    //       });
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   }
+    // }
     async function fetchData() {
-      let retryCount = 0;
       for (let i = 0; i < characterPool.length; i++) {
-        try {
-          const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
-          const url = `https://us.api.blizzard.com/profile/wow/character/${server}/${name}?namespace=profile-us&locale=en_US`;
-          const response = await fetch(url, {
-            headers: new Headers({
-              Authorization: `Bearer ${wowApiToken}`,
-            }),
-          });
-          if (!response.ok) {
-            if (response.status === 401) {
-              if (retryCount < 3) {
-                retryCount++;
-                await generateWowApiToken();
-                i--;
-                continue;
-              } else {
-                throw new Error(`Failed to renew and use API token`);
-              }
-            }
-            throw new Error(`Response status: ${response.status} for character [${characterPool[i]}]`);
-          }
-          const json = await response.json();
-          setDataSource((prev) => {
-            const copy = [...prev];
-            copy[i] = json;
-            return copy;
-          });
-        } catch (error) {
-          console.log(error);
-        }
+        const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
+        fetchAndUpdateCharacterDetail(name, server, i);
       }
     }
     fetchData();
   }, []);
+
+  async function fetchAndUpdateCharacterDetail(name, server, index) {
+    try {
+      const params = new URLSearchParams({ server, name });
+      const url = `${VITE_API_PREFIX}/wow_api/character?${params}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status} for character [${characterPool[index]}]`);
+      }
+      const json = await response.json();
+      setDataSource((prev) => {
+        const copy = [...prev];
+        copy[index] = json;
+        return copy;
+      });
+    } catch (error) {
+      console.log("Error - fetchAndUpdateCharacterDetail", error);
+    }
+  }
 
   const columns = [
     {
