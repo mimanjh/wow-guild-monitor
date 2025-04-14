@@ -1,13 +1,27 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.http import HttpResponse
-import os
-
-# Access environment variables
-BLIZZARD_API_CLIENT_ID = os.getenv('BLIZZARD_API_CLIENT_ID')
-BLIZZARD_API_CLIENT_SECRET = os.getenv('BLIZZARD_API_CLIENT_SECRET')
+from django.http import HttpResponse, JsonResponse
+from .utils import fetch_character_data, get_blizzard_valid_token
+from django.views.decorators.http import require_GET
 
 def index(request):
-    print("[T]", BLIZZARD_API_CLIENT_ID, BLIZZARD_API_CLIENT_SECRET)
-    return HttpResponse("Hello, world. You're at the wow-api index.")
+    return HttpResponse("Hello, world. You're at the wow_api index.")
+
+@require_GET
+def character_detail(request):
+    server = request.GET.get("server")
+    name = request.GET.get("name")
+
+    if not server or not name:
+        return JsonResponse({"error": "Missing required parameters."}, status=400)
+    
+    server = server.lower()
+    name = name.lower()
+
+    try:
+        data = fetch_character_data(server, name)
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
