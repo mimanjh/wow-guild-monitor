@@ -14,7 +14,6 @@ _token_cache = {
     "expires_at": None,
 }
 
-# Todo - implement token refresh
 def refresh_blizzard_token():
     # Implement logic to refresh the token
     response = requests.post(REFRESH_TOKEN_URL, data={
@@ -34,7 +33,6 @@ def refresh_blizzard_token():
     else:
         raise Exception(f"Failed to get token: {response.status_code} - {response.text}")
 
-# Todo - implement get token
 def get_blizzard_valid_token():
     access_token = _token_cache["access_token"]
     expires_at = _token_cache["expires_at"]
@@ -43,11 +41,26 @@ def get_blizzard_valid_token():
         return refresh_blizzard_token()
     return access_token
 
-# Todo - implement retrieve data using Blizzard API
 def fetch_character_data(server, name):
-    if(not server  or not name):
+    if(not server or not name):
         raise Exception("Server and name must be provided")
+    
+    server = server.lower()
+    name = name.lower()
+
     token = get_blizzard_valid_token()
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(f"https://us.api.blizzard.com/profile/wow/character/{server}/{name}?namespace=profile-us&locale=en_US", headers=headers)
+    return response.json()
+
+def fetch_guild_roaster_data(server, name):
+    if(not server or not name):
+        raise Exception("Server and name must be provided")
+    
+    server = server.lower()
+    name = name.lower().replace(" ", "-")
+
+    token = get_blizzard_valid_token()
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(f"https://us.api.blizzard.com/data/wow/guild/{server}/{name}/roster?namespace=profile-us", headers=headers)
     return response.json()
