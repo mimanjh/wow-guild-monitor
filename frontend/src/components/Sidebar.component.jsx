@@ -16,10 +16,10 @@ function Sidebar({ pathname }) {
       onClick: () => navigate("/guild-monitor"),
     },
     {
-      key: "/page2",
+      key: "/guild-roaster",
       icon: <UserOutlined />,
-      label: "Page 2",
-      onClick: () => navigate("/page2"),
+      label: "Guild Roaster",
+      onClick: () => navigate("/guild-roaster"),
     },
   ];
 

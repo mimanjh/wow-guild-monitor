@@ -3,8 +3,8 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Layout } from "antd";
 import Sidebar from "./components/Sidebar.component";
 import GuildMonitorPage from "./pages/GuildMonitorPage";
-import Page2 from "./pages/Page2";
 import "./functions/wowApi";
+import GuildRoasterPage from "./pages/GuildRoasterPage";
 const { Content, Header } = Layout;
 
 const headerHeightPx = 64;
@@ -34,7 +34,7 @@ function App() {
           >
             <Routes>
               <Route path="/guild-monitor" element={<GuildMonitorPage />} />
-              <Route path="/page2" element={<Page2 />} />
+              <Route path="/guild-roaster" element={<GuildRoasterPage />} />
               <Route path="/" element={<Navigate replace to={"/guild-monitor"} />} />
             </Routes>
           </Content>

@@ -21,8 +21,8 @@ export async function generateWowApiToken() {
   wowApiToken = data.access_token || wowApiToken;
 }
 
-try {
-  generateWowApiToken();
-} catch (e) {
-  console.error("Error - generateToken", e);
-}
+// try {
+//   generateWowApiToken();
+// } catch (e) {
+//   console.error("Error - generateToken", e);
+// }
