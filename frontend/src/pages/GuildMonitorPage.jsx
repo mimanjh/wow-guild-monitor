@@ -121,6 +121,14 @@ function GuildMonitorPage() {
         return `${name} - ${specName}`;
       },
     },
+    {
+      title: "Last played at",
+      dataIndex: "last_login_timestamp",
+      render: (timestamp) => {
+        const dateStr = dayjs(timestamp).format("YYYY-MM-DD h:mma");
+        return dateStr;
+      },
+    },
   ];
 
   const renderSummary = (pageData) => {
