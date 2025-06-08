@@ -1,5 +1,6 @@
-import requests
 import os
+
+import requests
 from django.utils.timezone import now, timedelta
 from requests.auth import HTTPBasicAuth
 
@@ -64,3 +65,12 @@ def fetch_guild_roaster_data(server, name):
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(f"https://us.api.blizzard.com/data/wow/guild/{server}/{name}/roster?namespace=profile-us", headers=headers)
     return response.json()
+
+def fetch_guild_admins(server, name):
+    guild_members = fetch_guild_roaster_data(server, name)
+    admins = []
+
+    for member in guild_members.get("members"):
+        if member["rank"] == 0 or member["rank"] == 1 or member["rank"] == 2:
+            admins.append(member)
+    return admins
