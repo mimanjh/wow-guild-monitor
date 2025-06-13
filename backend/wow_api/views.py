@@ -74,7 +74,7 @@ def oauth_callback(request):
         response.raise_for_status()
         token_data = response.json()
         
-        redirect_response = redirect("http://localhost:5173/")
+        redirect_response = redirect("http://127.0.0.1:5173/?authenticated=true")
         redirect_response.set_signed_cookie(
             key="access_token",
             value=token_data["access_token"],

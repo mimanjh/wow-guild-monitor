@@ -29,39 +29,28 @@ function App() {
     const guildName = "Awaken Reunited";
 
     useEffect(() => {
-        // If we just got redirected back from Blizzard, we should NOT call /oauth/callback from JS.
-        // The browser already hit it during redirect and set the cookie.
-
-        const codeInUrl = new URLSearchParams(window.location.search).get(
-            "code"
+        const authenticated = new URLSearchParams(window.location.search).get(
+            "authenticated"
         );
 
-        if (codeInUrl) {
-            // Clean the URL by removing the code param
-            navigate("/", { replace: true });
-            return;
+        if (authenticated) {
+            axios
+                .get(
+                    `${VITE_API_PREFIX}/wow_api/isAdmin?server=${serverName}&name=${guildName}`,
+                    { withCredentials: true }
+                )
+                .then((res) => {
+                    setIsAdmin(res.data.is_admin);
+                })
+                .catch((err) => {
+                    console.error("Admin check failed:", err);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            window.location.href = `${VITE_API_PREFIX}/wow_api/oauth/start`;
         }
-
-        // Try to call isAdmin, which relies on the signed cookie set by the backend
-        axios
-            .get(
-                `${VITE_API_PREFIX}/wow_api/isAdmin?server=${serverName}&name=${guildName}`,
-                {
-                    withCredentials: true, // VERY important to send cookies
-                }
-            )
-            .then((res) => {
-                setIsAdmin(res.data.is_admin);
-            })
-            .catch((err) => {
-                if (err.response?.status === 401) {
-                    // Not logged in → start auth
-                    window.location.href = `${VITE_API_PREFIX}/wow_api/oauth/start/`;
-                } else {
-                    console.error("isAdmin check failed:", err);
-                }
-            })
-            .finally(() => setLoading(false));
     }, []);
 
     if (loading) return <div>Loading...</div>;
