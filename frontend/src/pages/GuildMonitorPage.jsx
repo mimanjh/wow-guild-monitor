@@ -1,174 +1,173 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Table, Typography } from "antd";
-// import { generateWowApiToken, wowApiToken } from "../functions/wowApi";
 import dayjs from "dayjs";
 import "./GuildMonitorPage.scss";
-const VITE_API_PREFIX = import.meta.env.VITE_API_PREFIX;
+import axios from "axios";
 
+const VITE_API_PREFIX = import.meta.env.VITE_API_PREFIX;
 const { Title } = Typography;
 
-const characterPool = [
-  "givemebamboo-tichondrius",
-  "angrybites-tichondrius",
-  "Noahya-tichondrius",
-  "Hayaks-tichondrius",
-  "Lambda-tichondrius",
-  "Soullpow-tichondrius",
-  "Qudans-tichondrius",
-  "Typhoonsflow-tichondrius",
-  "Pjjcs-tichondrius",
-  "Fasolla-tichondrius",
-  "Jollyzirinda-tichondrius",
-  "Nadacow-tichondrius",
-  "Runeforging-tichondrius",
-  "Armysong-tichondrius",
-  "Zero-echo isles",
-];
+const colorPool = {
+    DeathKnight: "#C41F3B",
+    DemonHunter: "#A330C9",
+    Druid: "#FF7D0A",
+    Evoker: "#33937F",
+    Hunter: "#ABD473",
+    Mage: "#69CCF0",
+    Monk: "#00FF96",
+    Paladin: "#F58CBA",
+    Priest: "#FFFFFF",
+    Rogue: "#FFF569",
+    Shaman: "#0070DE",
+    Warlock: "#9482C9",
+    Warrior: "#C79C6E",
+};
+
 const guildName = "Awaken Reunited";
 
 function GuildMonitorPage() {
-  const [dataSource, setDataSource] = useState(new Array(characterPool.length).fill({ loading: true }));
-  const now = dayjs().format("YYYY-MM-DD HH:mm");
+    const now = dayjs().format("YYYY-MM-DD HH:mm");
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // async function fetchData() {
-    //   let retryCount = 0;
-    //   for (let i = 0; i < characterPool.length; i++) {
-    //     try {
-    //       const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
-    //       const url = `https://us.api.blizzard.com/profile/wow/character/${server}/${name}?namespace=profile-us&locale=en_US`;
-    //       const response = await fetch(url, {
-    //         headers: new Headers({
-    //           Authorization: `Bearer ${wowApiToken}`,
-    //         }),
-    //       });
-    //       if (!response.ok) {
-    //         if (response.status === 401) {
-    //           if (retryCount < 3) {
-    //             retryCount++;
-    //             await generateWowApiToken();
-    //             i--;
-    //             continue;
-    //           } else {
-    //             throw new Error(`Failed to renew and use API token`);
-    //           }
-    //         }
-    //         throw new Error(`Response status: ${response.status} for character [${characterPool[i]}]`);
-    //       }
-    //       const json = await response.json();
-    //       setDataSource((prev) => {
-    //         const copy = [...prev];
-    //         copy[i] = json;
-    //         return copy;
-    //       });
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
-    // }
-    async function fetchData() {
-      for (let i = 0; i < characterPool.length; i++) {
-        const [name, server] = characterPool[i].split("-").map((str) => str.replace(" ", "-").toLowerCase());
-        fetchAndUpdateCharacterDetail(name, server, i);
-      }
-    }
-    fetchData();
-  }, []);
+    useEffect(() => {
+        axios.get(`${VITE_API_PREFIX}/wow_api/users/update_db`).then(() => {
+            axios
+                .get(`${VITE_API_PREFIX}/wow_api/users`)
+                .then((res) => setDataSource(res.data))
+                .catch((err) => console.error("Failed to fetch users:", err))
+                .finally(() => setLoading(false));
+        });
+    }, []);
 
-  async function fetchAndUpdateCharacterDetail(name, server, index) {
-    try {
-      const params = new URLSearchParams({ server, name });
-      const url = `${VITE_API_PREFIX}/wow_api/character?${params}`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status} for character [${characterPool[index]}]`);
-      }
-      const json = await response.json();
-      setDataSource((prev) => {
-        const copy = [...prev];
-        copy[index] = json;
-        return copy;
-      });
-    } catch (error) {
-      console.log("Error - fetchAndUpdateCharacterDetail", error);
-    }
-  }
+    const columns = [
+        {
+            title: "Character Name",
+            dataIndex: "character",
+            render: (text, record) => {
+                if (record.isGroupRow) return null;
 
-  const columns = [
-    {
-      title: "Character Name",
-      dataIndex: "name",
-      render: (text, record) => (record.loading ? <Spin spinning /> : text),
-    },
-    {
-      title: "Realm",
-      dataIndex: ["realm", "name"],
-    },
-    {
-      title: "Item Level",
-      dataIndex: "average_item_level",
-    },
-    {
-      title: "Faction",
-      dataIndex: ["faction", "name"],
-    },
-    {
-      title: "Class",
-      dataIndex: ["character_class", "name"],
-      render: (name, record) => {
-        if (!name) return null;
-        const specName = record.active_spec.name;
-        return `${name} - ${specName}`;
-      },
-    },
-    {
-      title: "Last played at",
-      dataIndex: "last_login_timestamp",
-      render: (timestamp) => {
-        const dateStr = dayjs(timestamp).format("YYYY-MM-DD h:mma");
-        return dateStr;
-      },
-    },
-  ];
+                const className =
+                    record.character_class?.replace(/\s/g, "") || "default";
+                const iconPath = `/class_icons/${className.toLowerCase()}.png`;
+                return (
+                    <span
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                        }}
+                    >
+                        <img
+                            src={iconPath}
+                            alt={className}
+                            style={{
+                                width: 32,
+                                height: 32,
+                                objectFit: "contain",
+                            }}
+                        />
+                        {text}
+                    </span>
+                );
+            },
+        },
+        {
+            title: "Realm",
+            dataIndex: "realm",
+        },
+        {
+            title: "Item Level",
+            dataIndex: "average_item_level",
+        },
+        {
+            title: "Faction",
+            dataIndex: "faction",
+        },
+        {
+            title: "Class",
+            dataIndex: "character_class",
+            render: (cls, record) =>
+                cls && record.character_spec
+                    ? `${cls} - ${record.character_spec}`
+                    : cls || "",
+        },
+        {
+            title: "Role",
+            dataIndex: "role",
+            filters: ["Tank", "Healer", "Dealer"].map((role) => ({
+                text: role,
+                value: role,
+            })),
+            onFilter: (value, record) => record.role === value,
+        },
+        {
+            title: "Last Played At",
+            dataIndex: "last_login_timestamp",
+            render: (ts, record) => {
+                if (record.isGroupRow) return null;
 
-  const renderSummary = (pageData) => {
-    let totalIL = 0;
-    pageData.forEach(({ average_item_level }) => {
-      totalIL += average_item_level;
+                dayjs(ts).format("YYYY-MM-DD h:mma");
+            },
+        },
+    ];
+
+    const groupedData = dataSource.sort((a, b) => {
+        if (a.role === b.role) return 0;
+        const order = ["Tank", "Healer", "Dealer"];
+        return order.indexOf(a.role) - order.indexOf(b.role);
     });
-    return (
-      <>
-        <Table.Summary.Row>
-          <Table.Summary.Cell index={0} colSpan={2} align="right">
-            <b>Average Item Level</b>
-          </Table.Summary.Cell>
-          <Table.Summary.Cell index={1}>{(totalIL / pageData.length).toFixed(2)}</Table.Summary.Cell>
-        </Table.Summary.Row>
-      </>
-    );
-  };
 
-  return (
-    <div>
-      <Title level={2}>Guild Monitor</Title>
-      <p>Welcome to Guild Monitor! This data is for Awaken Reunited - Tichondrius Guild.</p>
-      <Table
-        title={() => (
-          <div style={{ display: "flex", gap: "10px" }}>
-            <h2>Awaken Reunited</h2>
-            <span style={{ marginLeft: "auto" }}>
-              <b>As of [{now}]</b>
-            </span>
-          </div>
-        )}
-        columns={columns}
-        dataSource={dataSource}
-        rowKey={"id"}
-        pagination={false}
-        rowClassName={(record) => (record.guild?.name !== guildName ? "row-warning" : "")}
-        summary={renderSummary}
-      />
-    </div>
-  );
+    const finalData = [];
+    let lastRole = null;
+    groupedData.forEach((item) => {
+        if (item.role !== lastRole) {
+            finalData.push({
+                isGroupRow: true,
+                role: item.role,
+                key: `grp-${item.role}`,
+            });
+            lastRole = item.role;
+        }
+        finalData.push({
+            ...item,
+            isGroupRow: false,
+            key: `${item.character}-${item.realm}`,
+        });
+    });
+
+    return (
+        <Table
+            columns={columns}
+            dataSource={finalData}
+            loading={loading}
+            pagination={false}
+            rowKey={(record) => record.key}
+            rowClassName={(record) =>
+                record.isGroupRow
+                    ? "table-group-row"
+                    : record.character_class
+                    ? `row-${record.character_class.replace(/\s/g, "")}`
+                    : ""
+            }
+            components={{
+                body: {
+                    row: ({ record, ...restProps }) => {
+                        if (record?.isGroupRow) {
+                            return (
+                                <tr className="table-group-row">
+                                    <td colSpan={columns.length}>
+                                        <strong>Role:</strong> {record.role}
+                                    </td>
+                                </tr>
+                            );
+                        }
+                        return <tr {...restProps} />;
+                    },
+                },
+            }}
+        />
+    );
 }
+
 export default GuildMonitorPage;

@@ -1,6 +1,38 @@
 .row-warning {
-  color: red;
+    color: red;
 }
 body {
-  background-color: beige;
+    background-color: beige;
+}
+
+@each $class,
+    $color
+        in (
+            DeathKnight: #c41f3b,
+            DemonHunter: #a330c9,
+            Druid: #ff7d0a,
+            Evoker: #33937f,
+            Hunter: #abd473,
+            Mage: #69ccf0,
+            Monk: #00ff96,
+            Paladin: #f58cba,
+            Priest: #ffffff,
+            Rogue: #fff569,
+            Shaman: #0070de,
+            Warlock: #9482c9,
+            Warrior: #c79c6e
+        )
+{
+    .row-#{$class} {
+        background-color: lighten($color, 40%);
+    }
+}
+
+.table-group-row {
+    background-color: #f0f0f0;
+    font-weight: bold;
+
+    td {
+        padding: 12px;
+    }
 }
