@@ -1,10 +1,12 @@
+import json
 import os
 
 import requests
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from .data_store import read_db, write_db
 from .utils import fetch_character_data, fetch_guild_admins, fetch_guild_roaster_data
 
 
@@ -121,3 +123,60 @@ def is_admin(request):
                     break
 
     return JsonResponse({"is_admin": is_admin})
+
+@require_GET
+def list_users(request):
+    return JsonResponse(read_db()["users"], safe=False)
+
+@require_POST
+def add_user(request):
+    payload = json.loads(request.body)
+    db = read_db()
+    db["users"].append(payload)
+    write_db(db)
+    return JsonResponse(payload, status=201)
+
+@require_http_methods(["PUT"])
+def update_user(request):
+    payload = json.loads(request.body)
+    char_name = payload.get("character")
+    realm = payload.get("realm")
+
+    if not char_name or not realm:
+        return JsonResponse({"error": "Missing character or realm"}, status=400)
+
+    db = read_db()
+    updated = False
+
+    for user in db["users"]:
+        if user["character"].lower() == char_name.lower() and user["realm"].lower() == realm.lower():
+            user.update(payload)
+            updated = True
+            break
+
+    if not updated:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    write_db(db)
+    return JsonResponse({"status": "updated", "user": payload})
+
+@require_GET
+def update_db(request):
+    db = read_db()
+    users = db.get("users", [])
+
+    for user in users:
+        try:
+            data = fetch_character_data(user["realm"], user["character"])
+            user.update({
+                "average_item_level": data.get("average_item_level", user.get("average_item_level")),
+                "faction": data.get("faction", {}).get("name", user.get("faction")),
+                "character_class": data.get("playable_class", {}).get("name", user.get("character_class")),
+                "character_spec": data.get("active_spec", {}).get("name", user.get("character_spec")),
+                "last_login_timestamp": data.get("last_login_timestamp", user.get("last_login_timestamp")),
+            })
+        except Exception as e:
+            print(f"Failed to update user {user['character']} from {user['realm']}: {e}")
+
+    write_db({"users": users})
+    return JsonResponse({"status": "updated", "users": users})

@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "character": "Jaicherd",
+      "realm": "Tichondrius",
+      "role": "Tank",
+      "average_item_level": 627,
+      "faction": "Alliance",
+      "character_class": "Druid",
+      "character_spec": "Guardian",
+      "last_login_timestamp": 1733554033000
+    },
+    {
+      "character": "Lushshaman",
+      "realm": "Tichondrius",
+      "role": "Healer",
+      "average_item_level": 637,
+      "faction": "Horde",
+      "character_class": "Shaman",
+      "character_spec": "Elemental",
+      "last_login_timestamp": 1735113426000
+    }
+  ]
+}
