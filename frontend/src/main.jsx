@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { ConfigProvider, theme } from "antd";
 import App from "./App";
 import "antd/dist/reset.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>
+    <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </ConfigProvider>
 );

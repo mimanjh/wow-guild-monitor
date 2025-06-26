@@ -1,0 +1,33 @@
+@each $class,
+    $color
+        in (
+            "DeathKnight": #c41e3a,
+            "DemonHunter": #a330c9,
+            "Druid": #ff7c0a,
+            "Evoker": #33937f,
+            "Hunter": #aad372,
+            "Mage": #3fc7eb,
+            "Monk": #00ff98,
+            "Paladin": #f48cba,
+            "Priest": #ffffff,
+            "Rogue": #fff468,
+            "Shaman": #0070dd,
+            "Warlock": #8788ee,
+            "Warrior": #c69b6d
+        )
+{
+    .row-#{$class} {
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 10%;
+            width: 100%;
+            background-color: $color;
+            pointer-events: none;
+        }
+    }
+}

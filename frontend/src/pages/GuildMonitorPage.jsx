@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Typography } from "antd";
+import { Spin, Table, Typography, Modal, Button, Layout } from "antd";
 import dayjs from "dayjs";
 import "./GuildMonitorPage.scss";
 import axios from "axios";
@@ -25,10 +25,13 @@ const colorPool = {
 
 const guildName = "Awaken Reunited";
 
+const { Header, Content } = Layout;
+
 function GuildMonitorPage() {
     const now = dayjs().format("YYYY-MM-DD HH:mm");
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [addDialogOpen, setAddDialogOpen] = useState(false);
 
     useEffect(() => {
         axios.get(`${VITE_API_PREFIX}/wow_api/users/update_db`).then(() => {
@@ -137,36 +140,73 @@ function GuildMonitorPage() {
     });
 
     return (
-        <Table
-            columns={columns}
-            dataSource={finalData}
-            loading={loading}
-            pagination={false}
-            rowKey={(record) => record.key}
-            rowClassName={(record) =>
-                record.isGroupRow
-                    ? "table-group-row"
-                    : record.character_class
-                    ? `row-${record.character_class.replace(/\s/g, "")}`
-                    : ""
-            }
-            components={{
-                body: {
-                    row: ({ record, ...restProps }) => {
-                        if (record?.isGroupRow) {
-                            return (
-                                <tr className="table-group-row">
-                                    <td colSpan={columns.length}>
-                                        <strong>Role:</strong> {record.role}
-                                    </td>
-                                </tr>
-                            );
-                        }
-                        return <tr {...restProps} />;
-                    },
-                },
-            }}
-        />
+        <Layout>
+            <Header
+                style={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
+                <Title level={3} style={{ margin: 0 }}>
+                    {guildName}
+                </Title>
+                <button
+                    className="add-character-btn"
+                    onClick={() => setAddDialogOpen(true)}
+                >
+                    Add Character
+                </button>
+            </Header>
+            <Modal
+                title="Add Character"
+                open={addDialogOpen}
+                onCancel={() => setAddDialogOpen(false)}
+                onOk={() => {
+                    // Submit logic here
+                    setAddDialogOpen(false);
+                }}
+            >
+                <p>Select a character to add:</p>
+                {/* Replace with actual select input or form */}
+                <input
+                    placeholder="Character name..."
+                    style={{ width: "100%" }}
+                />
+            </Modal>
+            <Content>
+                <Table
+                    columns={columns}
+                    dataSource={finalData}
+                    loading={loading}
+                    pagination={false}
+                    rowKey={(record) => record.key}
+                    rowClassName={(record) =>
+                        record.isGroupRow
+                            ? "table-group-row"
+                            : record.character_class
+                            ? `row-${record.character_class.replace(/\s/g, "")}`
+                            : ""
+                    }
+                    components={{
+                        body: {
+                            row: ({ record, ...restProps }) => {
+                                if (record?.isGroupRow) {
+                                    return (
+                                        <tr className="table-group-row">
+                                            <td colSpan={columns.length}>
+                                                <strong>Role:</strong>{" "}
+                                                {record.role}
+                                            </td>
+                                        </tr>
+                                    );
+                                }
+                                return <tr {...restProps} />;
+                            },
+                        },
+                    }}
+                />
+            </Content>
+        </Layout>
     );
 }
 

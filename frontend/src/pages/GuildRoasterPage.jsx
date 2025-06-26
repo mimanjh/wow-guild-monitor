@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Typography } from "antd";
+import { Spin, Table, Typography, Modal, Select, Button } from "antd";
 // import { generateWowApiToken, wowApiToken } from "../functions/wowApi";
 import dayjs from "dayjs";
 import "./GuildMonitorPage.scss";
@@ -10,10 +10,48 @@ const { Title } = Typography;
 const guildName = "Awaken Reunited";
 const guildServer = "Tichondrius";
 
+const classMap = {
+    1: "Warrior",
+    2: "Paladin",
+    3: "Hunter",
+    4: "Rogue",
+    5: "Priest",
+    6: "Death Knight",
+    7: "Shaman",
+    8: "Mage",
+    9: "Warlock",
+    10: "Monk",
+    11: "Druid",
+    12: "Demon Hunter",
+    13: "Evoker",
+};
+
 function GuildRoasterPage() {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
     const now = dayjs().format("YYYY-MM-DD HH:mm");
+    const { Option } = Select;
+    const [addDialogOpen, setAddDialogOpen] = useState(false);
+    const [selectedChar, setSelectedChar] = useState(null);
+
+    const normalizeClassName = (id) => {
+        const classMap = {
+            1: "Warrior",
+            2: "Paladin",
+            3: "Hunter",
+            4: "Rogue",
+            5: "Priest",
+            6: "DeathKnight",
+            7: "Shaman",
+            8: "Mage",
+            9: "Warlock",
+            10: "Monk",
+            11: "Druid",
+            12: "DemonHunter",
+            13: "Evoker",
+        };
+        return classMap[id] || "Unknown";
+    };
 
     useEffect(() => {
         async function fetchData() {
@@ -71,6 +109,13 @@ function GuildRoasterPage() {
             title: "Faction",
             dataIndex: ["character", "faction", "type"],
         },
+        {
+            title: "Class",
+            render: (_, record) => {
+                const classId = record.character.playable_class?.id;
+                return classMap[classId] || "Unknown";
+            },
+        },
         // {
         //   title: "Item Level",
         //   dataIndex: "average_item_level",
@@ -87,7 +132,7 @@ function GuildRoasterPage() {
     ];
 
     return (
-        <div>
+        <>
             <Title level={2}>Guild Roaster</Title>
             <p>
                 Welcome to Guild Roaster! This data is for Awaken Reunited -
@@ -95,14 +140,25 @@ function GuildRoasterPage() {
             </p>
             <Table
                 title={() => (
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        <h2>
-                            Awaken Reunited -{" "}
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                        }}
+                    >
+                        <h2 style={{ margin: 0 }}>
+                            Awaken Reunited –{" "}
                             <span>{dataSource.length} members</span>
                         </h2>
-                        <span style={{ marginLeft: "auto" }}>
-                            <b>As of [{now}]</b>
-                        </span>
+                        <Button
+                            type="primary"
+                            onClick={() => setAddDialogOpen(true)}
+                            style={{ marginLeft: "auto" }}
+                        >
+                            Set Character
+                        </Button>
+                        <b>As of [{now}]</b>
                     </div>
                 )}
                 columns={columns}
@@ -110,8 +166,45 @@ function GuildRoasterPage() {
                 rowKey={["character", "id"]}
                 pagination={false}
                 loading={loading}
+                rowClassName={(record) => {
+                    const classId = record.character?.playable_class?.id;
+                    const cssClass = normalizeClassName(classId);
+                    return `row-${cssClass}`;
+                }}
             />
-        </div>
+            <Modal
+                title="Add Character to Tracker"
+                open={addDialogOpen}
+                onCancel={() => setAddDialogOpen(false)}
+                onOk={() => {
+                    if (selectedChar) {
+                        console.log("Character added:", selectedChar);
+                        setAddDialogOpen(false);
+                    }
+                }}
+                okButtonProps={{ disabled: !selectedChar }}
+            >
+                <Select
+                    showSearch
+                    style={{ width: "100%" }}
+                    placeholder="Search by name or class"
+                    onChange={(value) => setSelectedChar(value)}
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={dataSource.map((member) => {
+                        const name = member.character.name;
+                        const classId = member.character.playable_class?.id;
+                        const className = classMap[classId] || "Unknown";
+
+                        return {
+                            label: `${name} (${className})`,
+                            value: name,
+                        };
+                    })}
+                />
+            </Modal>
+        </>
     );
 }
 export default GuildRoasterPage;
