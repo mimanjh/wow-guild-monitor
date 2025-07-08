@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Typography, Modal, Button, Layout } from "antd";
+import {
+    Spin,
+    Table,
+    Typography,
+    Modal,
+    Button,
+    Layout,
+    Input,
+    Select,
+    message,
+    AutoComplete,
+} from "antd";
 import dayjs from "dayjs";
 import "./GuildMonitorPage.scss";
 import axios from "axios";
@@ -7,41 +18,95 @@ import axios from "axios";
 const VITE_API_PREFIX = import.meta.env.VITE_API_PREFIX;
 const { Title } = Typography;
 
-const colorPool = {
-    DeathKnight: "#C41F3B",
-    DemonHunter: "#A330C9",
-    Druid: "#FF7D0A",
-    Evoker: "#33937F",
-    Hunter: "#ABD473",
-    Mage: "#69CCF0",
-    Monk: "#00FF96",
-    Paladin: "#F58CBA",
-    Priest: "#FFFFFF",
-    Rogue: "#FFF569",
-    Shaman: "#0070DE",
-    Warlock: "#9482C9",
-    Warrior: "#C79C6E",
-};
-
 const guildName = "Awaken Reunited";
+const guildServer = "Tichondrius";
 
 const { Header, Content } = Layout;
+const { Option } = Select;
 
 function GuildMonitorPage() {
-    const now = dayjs().format("YYYY-MM-DD HH:mm");
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
     const [addDialogOpen, setAddDialogOpen] = useState(false);
+    const [selectedChar, setSelectedChar] = useState(null);
+    const [role, setRole] = useState(null);
+    const [searchText, setSearchText] = useState("");
+    const [options, setOptions] = useState([]);
+    const [members, setMembers] = useState([]);
 
     useEffect(() => {
+        refreshRoster();
+        fetchGuildRoster();
+    }, []);
+
+    function refreshRoster() {
+        setLoading(true);
         axios.get(`${VITE_API_PREFIX}/wow_api/users/update_db`).then(() => {
             axios
                 .get(`${VITE_API_PREFIX}/wow_api/users`)
-                .then((res) => setDataSource(res.data))
-                .catch((err) => console.error("Failed to fetch users:", err))
+                .then((res) => {
+                    setDataSource(res.data);
+                })
                 .finally(() => setLoading(false));
         });
-    }, []);
+    }
+
+    function fetchGuildRoster() {
+        const params = new URLSearchParams({
+            server: guildServer.toLowerCase().replace(" ", "-"),
+            name: guildName.toLowerCase(),
+        });
+        axios
+            .get(`${VITE_API_PREFIX}/wow_api/guild/roaster?${params}`)
+            .then((res) => {
+                const rawMembers = res.data.members;
+                const membersArray = Array.isArray(rawMembers)
+                    ? rawMembers
+                    : Object.values(rawMembers); // fallback in case it's an object
+
+                setMembers(membersArray);
+
+                // use the array directly instead of relying on state
+                setOptions(
+                    membersArray.map((c) => ({
+                        value: c.name,
+                    }))
+                );
+            })
+            .catch((err) => {
+                console.error("Failed to fetch guild roster: ", err);
+                message.error("Could not load guild roster");
+            });
+    }
+
+    function openAddDialog() {
+        setAddDialogOpen(true);
+    }
+
+    function handleSubmit() {
+        if (!selectedChar || !role) {
+            message.error("Please select a character and role.");
+            return;
+        }
+
+        axios
+            .post(`${VITE_API_PREFIX}/wow_api/users/add_user`, {
+                character: selectedChar,
+                role,
+            })
+            .then(() => {
+                message.success(`${selectedChar} added as ${role}`);
+                setAddDialogOpen(false);
+                setSelectedChar(null);
+                setRole(null);
+                setSearchText("");
+                refreshRoster();
+            })
+            .catch((err) => {
+                console.error(err);
+                message.error("Failed to add user.");
+            });
+    }
 
     const columns = [
         {
@@ -145,6 +210,8 @@ function GuildMonitorPage() {
                 style={{
                     justifyContent: "space-between",
                     alignItems: "center",
+                    display: "flex",
+                    height: "70px",
                 }}
             >
                 <Title level={3} style={{ margin: 0 }}>
@@ -152,26 +219,48 @@ function GuildMonitorPage() {
                 </Title>
                 <button
                     className="add-character-btn"
-                    onClick={() => setAddDialogOpen(true)}
+                    onClick={() => openAddDialog()}
+                    style={{
+                        display: "flex",
+                        height: "70%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "10%",
+                    }}
                 >
-                    Add Character
+                    Add to Roster
                 </button>
             </Header>
             <Modal
-                title="Add Character"
+                title="Add to Roster"
                 open={addDialogOpen}
                 onCancel={() => setAddDialogOpen(false)}
-                onOk={() => {
-                    // Submit logic here
-                    setAddDialogOpen(false);
-                }}
+                onOk={handleSubmit}
+                okButtonProps={{ disabled: !selectedChar || !role }}
             >
-                <p>Select a character to add:</p>
-                {/* Replace with actual select input or form */}
-                <input
-                    placeholder="Character name..."
-                    style={{ width: "100%" }}
+                <p>Select a character:</p>
+                <AutoComplete
+                    style={{ width: "100%", marginBottom: 12 }}
+                    options={options}
+                    value={searchText}
+                    onSearch={setSearchText}
+                    onSelect={(value) => {
+                        setSelectedChar(value);
+                        setSearchText(value);
+                    }}
+                    placeholder="Start typing character name..."
                 />
+                <p>Set role:</p>
+                <Select
+                    placeholder="Role"
+                    style={{ width: "100%" }}
+                    onChange={(val) => setRole(val)}
+                    value={role}
+                >
+                    <Option value="Tank">Tank</Option>
+                    <Option value="Healer">Healer</Option>
+                    <Option value="Dealer">Dealer</Option>
+                </Select>
             </Modal>
             <Content>
                 <Table

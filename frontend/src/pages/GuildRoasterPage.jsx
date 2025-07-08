@@ -173,7 +173,7 @@ function GuildRoasterPage() {
                 }}
             />
             <Modal
-                title="Add Character to Tracker"
+                title="Add Character to Roster"
                 open={addDialogOpen}
                 onCancel={() => setAddDialogOpen(false)}
                 onOk={() => {
