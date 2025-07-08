@@ -24,6 +24,25 @@ const guildServer = "Tichondrius";
 const { Header, Content } = Layout;
 const { Option } = Select;
 
+const normalizeClassName = (id) => {
+    const classMap = {
+        1: "Warrior",
+        2: "Paladin",
+        3: "Hunter",
+        4: "Rogue",
+        5: "Priest",
+        6: "DeathKnight",
+        7: "Shaman",
+        8: "Mage",
+        9: "Warlock",
+        10: "Monk",
+        11: "Druid",
+        12: "DemonHunter",
+        13: "Evoker",
+    };
+    return classMap[id] || "Unknown";
+};
+
 function GuildMonitorPage() {
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -65,13 +84,6 @@ function GuildMonitorPage() {
                     : Object.values(rawMembers); // fallback in case it's an object
 
                 setMembers(membersArray);
-
-                // use the array directly instead of relying on state
-                setOptions(
-                    membersArray.map((c) => ({
-                        value: c.name,
-                    }))
-                );
             })
             .catch((err) => {
                 console.error("Failed to fetch guild roster: ", err);
@@ -90,7 +102,7 @@ function GuildMonitorPage() {
         }
 
         axios
-            .post(`${VITE_API_PREFIX}/wow_api/users/add_user`, {
+            .post(`${VITE_API_PREFIX}/wow_api/users/add`, {
                 character: selectedChar,
                 role,
             })
@@ -243,11 +255,29 @@ function GuildMonitorPage() {
                     style={{ width: "100%", marginBottom: 12 }}
                     options={options}
                     value={searchText}
-                    onSearch={setSearchText}
+                    onSearch={(text) => {
+                        setSearchText(text);
+                        const filtered = members
+                            .filter((m) =>
+                                m.character.name
+                                    .toLowerCase()
+                                    .includes(text.toLowerCase())
+                            )
+                            .map((m) => ({
+                                value: m.character.name, // for backend
+                                label: `${
+                                    m.character.name
+                                } - ${normalizeClassName(
+                                    m.character.playable_class.id
+                                )}`, // for UI
+                            }));
+                        setOptions(filtered);
+                    }}
                     onSelect={(value) => {
                         setSelectedChar(value);
                         setSearchText(value);
                     }}
+                    optionLabelProp="label" // ✅ important when using custom labels
                     placeholder="Start typing character name..."
                 />
                 <p>Set role:</p>
