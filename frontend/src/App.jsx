@@ -48,6 +48,12 @@ function App() {
                 .finally(() => {
                     setLoading(false);
                 });
+            axios
+                .get(`${VITE_API_PREFIX}/wow_api/csrf`, {
+                    withCredentials: true,
+                })
+                .then(console.log("csrf cookie set"))
+                .catch((err) => console.error("Failed to get CSRF token", err));
         } else {
             window.location.href = `${VITE_API_PREFIX}/wow_api/oauth/start`;
         }

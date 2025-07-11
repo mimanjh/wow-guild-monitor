@@ -13,6 +13,8 @@ urlpatterns = [
     path("isAdmin", views.is_admin, name="is_admin"),
     path("users", views.list_users, name="list_users"),
     path("users/add", views.add_user, name="add_user"),
+    path("users/delete", views.remove_user, name="remove_user"),
     path("users/update_user", views.update_user, name="update_user"),
-    path("users/update_db", views.update_db, name="update_db")
+    path("users/update_db", views.update_db, name="update_db"),
+    path("csrf", views.get_csrf_token, name="get_csrf_token")
 ]

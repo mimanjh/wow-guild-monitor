@@ -4,6 +4,7 @@ import os
 import requests
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .data_store import read_db, write_db
@@ -12,6 +13,11 @@ from .utils import fetch_character_data, fetch_guild_admins, fetch_guild_roaster
 
 def index(request):
     return HttpResponse("Hello, world. You're at the wow_api index.")
+
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
 
 @require_GET
 def character_detail(request):
@@ -96,7 +102,7 @@ def is_admin(request):
     guild_name = request.GET.get("name")
 
     access_token = request.get_signed_cookie("access_token", default=None)
-    print("access_token: ", access_token)
+
     if not access_token:
         return JsonResponse({"error": "User is not authenticated"}, status=401)
 
@@ -117,7 +123,6 @@ def is_admin(request):
         for char in account.get("characters", []):
             char_name = char["name"].lower()
             for admin in guild_admins:
-                print(char_name, ": ", admin["character"]["name"])
                 if admin["rank"] in [0, 1] and admin["character"]["name"].lower() == char_name:
                     is_admin = True
                     break
@@ -135,6 +140,35 @@ def add_user(request):
     db["users"].append(payload)
     write_db(db)
     return JsonResponse(payload, status=201)
+
+@require_http_methods(["DELETE"])
+def remove_user(request):
+    try:
+        data = json.loads(request.body)
+        name = data.get("character")
+
+        if not name:
+            return JsonResponse({"error": "Missing 'character' in request"}, status=400)
+
+        db = read_db()
+        users = db.get("users", [])
+        original_len = len(users)
+
+        # Remove matching user
+        users = [u for u in users if not (
+            u.get("character").lower() == name.lower()
+        )]
+
+        if len(users) == original_len:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+        db["users"] = users
+        write_db(db)
+
+        return JsonResponse({"detail": "User removed"}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @require_http_methods(["PUT"])
 def update_user(request):
@@ -164,14 +198,13 @@ def update_user(request):
 def update_db(request):
     db = read_db()
     users = db.get("users", [])
-
     for user in users:
         try:
             data = fetch_character_data(user["realm"], user["character"])
             user.update({
                 "average_item_level": data.get("average_item_level", user.get("average_item_level")),
                 "faction": data.get("faction", {}).get("name", user.get("faction")),
-                "character_class": data.get("playable_class", {}).get("name", user.get("character_class")),
+                "character_class": data.get("character_class", {}).get("name", user.get("character_class")),
                 "character_spec": data.get("active_spec", {}).get("name", user.get("character_spec")),
                 "last_login_timestamp": data.get("last_login_timestamp", user.get("last_login_timestamp")),
             })

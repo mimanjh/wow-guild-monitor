@@ -52,10 +52,12 @@ function GuildMonitorPage() {
     const [searchText, setSearchText] = useState("");
     const [options, setOptions] = useState([]);
     const [members, setMembers] = useState([]);
+    const [csrftoken, setCsrfToken] = useState("");
 
     useEffect(() => {
         refreshRoster();
         fetchGuildRoster();
+        setCsrfToken(getCookie("csrftoken"));
     }, []);
 
     function refreshRoster() {
@@ -81,7 +83,8 @@ function GuildMonitorPage() {
                 const rawMembers = res.data.members;
                 const membersArray = Array.isArray(rawMembers)
                     ? rawMembers
-                    : Object.values(rawMembers); // fallback in case it's an object
+                    : Object.values(rawMembers);
+                membersArray.sort((a, b) => a.rank - b.rank);
 
                 setMembers(membersArray);
             })
@@ -91,21 +94,45 @@ function GuildMonitorPage() {
             });
     }
 
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
     function openAddDialog() {
         setAddDialogOpen(true);
     }
 
-    function handleSubmit() {
+    function handleAddSubmit() {
         if (!selectedChar || !role) {
             message.error("Please select a character and role.");
             return;
         }
+        console.log(selectedChar);
+        var character = members.find((m) => {
+            return m.character.name.toLowerCase() == selectedChar.toLowerCase();
+        });
+        if (character) {
+            var realm = character.character.realm.slug;
+        }
 
         axios
-            .post(`${VITE_API_PREFIX}/wow_api/users/add`, {
-                character: selectedChar,
-                role,
-            })
+            .post(
+                `${VITE_API_PREFIX}/wow_api/users/add`,
+                {
+                    character: selectedChar,
+                    realm: realm,
+                    role,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrftoken,
+                    },
+                    withCredentials: true,
+                }
+            )
             .then(() => {
                 message.success(`${selectedChar} added as ${role}`);
                 setAddDialogOpen(false);
@@ -119,6 +146,8 @@ function GuildMonitorPage() {
                 message.error("Failed to add user.");
             });
     }
+
+    function handleRemoveSubmit() {}
 
     const columns = [
         {
@@ -247,7 +276,7 @@ function GuildMonitorPage() {
                 title="Add to Roster"
                 open={addDialogOpen}
                 onCancel={() => setAddDialogOpen(false)}
-                onOk={handleSubmit}
+                onOk={handleAddSubmit}
                 okButtonProps={{ disabled: !selectedChar || !role }}
             >
                 <p>Select a character:</p>

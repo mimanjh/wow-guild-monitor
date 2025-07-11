@@ -4,11 +4,11 @@
       "character": "Jaicherd",
       "realm": "Tichondrius",
       "role": "Tank",
-      "average_item_level": 673,
+      "average_item_level": 674,
       "faction": "Alliance",
       "character_class": "Druid",
-      "character_spec": "Feral",
-      "last_login_timestamp": 1751913186000
+      "character_spec": "Guardian",
+      "last_login_timestamp": 1752251443000
     },
     {
       "character": "Lushshaman",
@@ -18,7 +18,7 @@
       "faction": "Horde",
       "character_class": "Shaman",
       "character_spec": "Elemental",
-      "last_login_timestamp": 1751857996000
+      "last_login_timestamp": 1752213131000
     },
     {
       "character": "Angrybites",
@@ -28,17 +28,17 @@
       "faction": "Horde",
       "character_class": "Monk",
       "character_spec": "Brewmaster",
-      "last_login_timestamp": 1751934896000
+      "last_login_timestamp": 1752210909000
     },
     {
       "character": "Nadaforever",
       "realm": "Tichondrius",
       "role": "Dealer",
-      "average_item_level": 671,
+      "average_item_level": 672,
       "faction": "Horde",
       "character_class": "Warlock",
       "character_spec": "Demonology",
-      "last_login_timestamp": 1751689182000
+      "last_login_timestamp": 1751996158000
     },
     {
       "character": "Evii",
@@ -48,7 +48,7 @@
       "faction": "Horde",
       "character_class": "Paladin",
       "character_spec": "Retribution",
-      "last_login_timestamp": 1751878599000
+      "last_login_timestamp": 1752113388000
     },
     {
       "character": "Fasolla",
@@ -58,7 +58,7 @@
       "faction": "Horde",
       "character_class": "Druid",
       "character_spec": "Balance",
-      "last_login_timestamp": 1751790862000
+      "last_login_timestamp": 1752124901000
     },
     {
       "character": "Givemebamboo",
@@ -78,7 +78,7 @@
       "faction": "Alliance",
       "character_class": "Demon Hunter",
       "character_spec": "Vengeance",
-      "last_login_timestamp": 1751520192000
+      "last_login_timestamp": 1751954699000
     },
     {
       "character": "Soulpoww",
@@ -88,7 +88,7 @@
       "faction": "Horde",
       "character_class": "Shaman",
       "character_spec": "Restoration",
-      "last_login_timestamp": 1751877743000
+      "last_login_timestamp": 1752219806000
     },
     {
       "character": "Hayaks",
@@ -98,7 +98,17 @@
       "faction": "Horde",
       "character_class": "Demon Hunter",
       "character_spec": "Vengeance",
-      "last_login_timestamp": 1751786761000
+      "last_login_timestamp": 1752249138000
+    },
+    {
+      "character": "Nadaforever",
+      "realm": "tichondrius",
+      "role": "Tank",
+      "average_item_level": 672,
+      "faction": "Horde",
+      "character_class": "Warlock",
+      "character_spec": "Demonology",
+      "last_login_timestamp": 1751996158000
     }
   ]
 }

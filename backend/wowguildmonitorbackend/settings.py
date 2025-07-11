@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -60,15 +61,20 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
+    "http://localhost:5173"
 ]
-CORS_ALLOW_HEADERS = [
-    "authorization",
-    "content-type"
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-csrftoken"
 ]
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
     "OPTIONS"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173"
 ]
 
 SESSION_COOKIE_SAMESITE = "Lax"
