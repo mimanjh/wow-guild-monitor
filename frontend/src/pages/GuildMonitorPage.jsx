@@ -53,6 +53,7 @@ function GuildMonitorPage() {
     const [options, setOptions] = useState([]);
     const [members, setMembers] = useState([]);
     const [csrftoken, setCsrfToken] = useState("");
+    const [avgILvl, setAvgILvl] = useState(0);
 
     useEffect(() => {
         refreshRoster();
@@ -67,8 +68,22 @@ function GuildMonitorPage() {
                 .get(`${VITE_API_PREFIX}/wow_api/users`)
                 .then((res) => {
                     setDataSource(res.data);
+                    const { sum, count } = res.data.reduce(
+                        (acc, el) => {
+                            const n = Number(el.average_item_level);
+                            if (!Number.isNaN(n)) {
+                                acc.sum += n;
+                                acc.count += 1;
+                            }
+                            return acc;
+                        },
+                        { sum: 0, count: 0 }
+                    );
+                    setAvgILvl(count ? sum / count : 0);
                 })
-                .finally(() => setLoading(false));
+                .finally(() => {
+                    setLoading(false);
+                });
         });
     }
 
@@ -258,6 +273,7 @@ function GuildMonitorPage() {
                 <Title level={3} style={{ margin: 0 }}>
                     {guildName}
                 </Title>
+                <span>Avg: {avgILvl ? avgILvl.toFixed(2) : "—"}</span>
                 <button
                     className="add-character-btn"
                     onClick={() => openAddDialog()}
