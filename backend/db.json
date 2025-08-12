@@ -4,111 +4,191 @@
       "character": "Jaicherd",
       "realm": "Tichondrius",
       "role": "Tank",
-      "average_item_level": 674,
+      "average_item_level": 686,
       "faction": "Alliance",
       "character_class": "Druid",
       "character_spec": "Guardian",
-      "last_login_timestamp": 1752251443000
+      "last_login_timestamp": 1754972915000
     },
     {
       "character": "Lushshaman",
       "realm": "Tichondrius",
       "role": "Healer",
-      "average_item_level": 647,
+      "average_item_level": 678,
       "faction": "Horde",
       "character_class": "Shaman",
-      "character_spec": "Elemental",
-      "last_login_timestamp": 1752213131000
-    },
-    {
-      "character": "Angrybites",
-      "realm": "Tichondrius",
-      "role": "Healer",
-      "average_item_level": 684,
-      "faction": "Horde",
-      "character_class": "Monk",
-      "character_spec": "Brewmaster",
-      "last_login_timestamp": 1752210909000
+      "character_spec": "Restoration",
+      "last_login_timestamp": 1754979874000
     },
     {
       "character": "Nadaforever",
       "realm": "Tichondrius",
       "role": "Dealer",
-      "average_item_level": 672,
+      "average_item_level": 682,
       "faction": "Horde",
       "character_class": "Warlock",
       "character_spec": "Demonology",
-      "last_login_timestamp": 1751996158000
+      "last_login_timestamp": 1754979218000
     },
     {
-      "character": "Evii",
+      "character": "Fasola",
       "realm": "Tichondrius",
       "role": "Dealer",
-      "average_item_level": 680,
+      "average_item_level": 683,
       "faction": "Horde",
-      "character_class": "Paladin",
-      "character_spec": "Retribution",
-      "last_login_timestamp": 1752113388000
-    },
-    {
-      "character": "Fasolla",
-      "realm": "Tichondrius",
-      "role": "Dealer",
-      "average_item_level": 682,
-      "faction": "Horde",
-      "character_class": "Druid",
-      "character_spec": "Balance",
-      "last_login_timestamp": 1752124901000
+      "character_class": "Priest",
+      "character_spec": "Shadow",
+      "last_login_timestamp": 1754970515000
     },
     {
       "character": "Givemebamboo",
       "realm": "Tichondrius",
       "role": "Dealer",
-      "average_item_level": 668,
+      "average_item_level": 682,
       "faction": "Horde",
       "character_class": "Rogue",
       "character_spec": "Subtlety",
-      "last_login_timestamp": 1746254797000
+      "last_login_timestamp": 1754884189000
     },
     {
-      "character": "Noahya",
+      "character": "Hayaks",
       "realm": "Tichondrius",
       "role": "Tank",
-      "average_item_level": 682,
-      "faction": "Alliance",
+      "average_item_level": 685,
+      "faction": "Horde",
       "character_class": "Demon Hunter",
       "character_spec": "Vengeance",
-      "last_login_timestamp": 1751954699000
+      "last_login_timestamp": 1754888232000
+    },
+    {
+      "character": "Jipanda",
+      "realm": "Tichondrius",
+      "role": "Healer",
+      "average_item_level": 685,
+      "faction": "Horde",
+      "character_class": "Shaman",
+      "character_spec": "Restoration",
+      "last_login_timestamp": 1754978687000
     },
     {
       "character": "Soulpoww",
       "realm": "Tichondrius",
       "role": "Healer",
-      "average_item_level": 684,
+      "average_item_level": 687,
       "faction": "Horde",
       "character_class": "Shaman",
       "character_spec": "Restoration",
-      "last_login_timestamp": 1752219806000
+      "last_login_timestamp": 1754813046000
     },
     {
-      "character": "Hayaks",
+      "character": "Piio",
+      "realm": "Tichondrius",
+      "role": "Healer",
+      "average_item_level": 682,
+      "faction": "Alliance",
+      "character_class": "Druid",
+      "character_spec": "Guardian",
+      "last_login_timestamp": 1754980718000
+    },
+    {
+      "character": "Donottarget",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 685,
+      "faction": "Horde",
+      "character_class": "Death Knight",
+      "character_spec": "Frost",
+      "last_login_timestamp": 1754976094000
+    },
+    {
+      "character": "Typhoonsflow",
       "realm": "Tichondrius",
       "role": "Dealer",
       "average_item_level": 682,
       "faction": "Horde",
-      "character_class": "Demon Hunter",
-      "character_spec": "Vengeance",
-      "last_login_timestamp": 1752249138000
+      "character_class": "Paladin",
+      "character_spec": "Retribution",
+      "last_login_timestamp": 1754973855000
     },
     {
-      "character": "Nadaforever",
-      "realm": "tichondrius",
-      "role": "Tank",
-      "average_item_level": 672,
+      "character": "Khanjar",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 681,
       "faction": "Horde",
-      "character_class": "Warlock",
-      "character_spec": "Demonology",
-      "last_login_timestamp": 1751996158000
+      "character_class": "Monk",
+      "character_spec": "Windwalker",
+      "last_login_timestamp": 1754968203000
+    },
+    {
+      "character": "Livathian",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 685,
+      "faction": "Horde",
+      "character_class": "Paladin",
+      "character_spec": "Retribution",
+      "last_login_timestamp": 1754888232000
+    },
+    {
+      "character": "Moonvee",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 680,
+      "faction": "Horde",
+      "character_class": "Death Knight",
+      "character_spec": "Frost",
+      "last_login_timestamp": 1754973738000
+    },
+    {
+      "character": "Culil",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 676,
+      "faction": "Horde",
+      "character_class": "Demon Hunter",
+      "character_spec": "Havoc",
+      "last_login_timestamp": 1754984804000
+    },
+    {
+      "character": "Howdi",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 685,
+      "faction": "Horde",
+      "character_class": "Mage",
+      "character_spec": "Arcane",
+      "last_login_timestamp": 1754888232000
+    },
+    {
+      "character": "Naldarang",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 684,
+      "faction": "Horde",
+      "character_class": "Hunter",
+      "character_spec": "Beast Mastery",
+      "last_login_timestamp": 1754959329000
+    },
+    {
+      "character": "Volq",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 677,
+      "faction": "Alliance",
+      "character_class": "Mage",
+      "character_spec": "Arcane",
+      "last_login_timestamp": 1754979229000
+    },
+    {
+      "character": "Badasi",
+      "realm": "Tichondrius",
+      "role": "Dealer",
+      "average_item_level": 682,
+      "faction": "Horde",
+      "character_class": "Shaman",
+      "character_spec": "Elemental",
+      "last_login_timestamp": 1754963994000
     }
   ]
 }
